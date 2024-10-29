@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: edge-service
+
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: http://localhost:8082  # user-service ??
+          predicates:
+            - Path=/api/v1/users/**    # user-service ??
+          filters:
+            - name: JwtAuthFilter      # ??? ?? JWT ?? ??
+
+        - id: movie-service
+          uri: http://localhost:8081  # movie-service ??
+          predicates:
+            - Path=/api/v1/movies/**   # movie-service ??
+          filters:
+            -name : JwtAuthFilterOptional
+
+server:
+  port: 8080
+
+kakao:
+  client:
+    id: 3c46ac9fcd53813acad0147afe8d5a31
+
+jwt:
+  secretKey: polarMoviechartJwtSecretPolarMoviechartJwtSecret
+#  refreshTokenValidityInMilliseconds: 604800000 # 7?
+#  accessTokenValidityInMilliseconds: 3600000 # 1??
