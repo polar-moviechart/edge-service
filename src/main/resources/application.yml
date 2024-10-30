@@ -4,20 +4,17 @@ spring:
 
   cloud:
     gateway:
-      routes:
-        - id: user-service
-          uri: http://localhost:8082  # user-service ??
-          predicates:
-            - Path=/api/v1/users/**    # user-service ??
-          filters:
-            - name: JwtAuthFilter      # ??? ?? JWT ?? ??
+      mvc:
+        routes:
+          - id: user-service
+            uri: http://localhost:8082  # user-service ??
+            predicates:
+              - Path=/api/v1/users/**    # user-service ??
 
-        - id: movie-service
-          uri: http://localhost:8081  # movie-service ??
-          predicates:
-            - Path=/api/v1/movies/**   # movie-service ??
-          filters:
-            -name : JwtAuthFilterOptional
+          - id: movie-service
+            uri: http://localhost:8081  # movie-service ??
+            predicates:
+              - Path=/api/v1/movies/**   # movie-service ??
 
 server:
   port: 8080
