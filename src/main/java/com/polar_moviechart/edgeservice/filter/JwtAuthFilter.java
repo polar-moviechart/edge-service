@@ -2,15 +2,14 @@ package com.polar_moviechart.edgeservice.filter;
 
 import com.polar_moviechart.edgeservice.exception.TokenProcessException;
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
+@Slf4j
 @Component
-public class JwtAuthFilter implements Filter {
+public class JwtAuthFilter {
 
     private final JwtTokenProcessor jwtTokenProcessor;
 
@@ -18,20 +17,12 @@ public class JwtAuthFilter implements Filter {
         this.jwtTokenProcessor = jwtTokenProcessor;
     }
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        // 특정 경로를 검사
-        String requestURI = httpRequest.getRequestURI();
-        if (requestURI.startsWith("/api/v1/movies") || requestURI.startsWith("/api/v1/login/kakao")) {
-            // 이 경로에서는 필터를 적용하지 않음
-            chain.doFilter(request, response);
+    public void processJwtAuth(HttpServletRequest request, HttpServletResponse response) {
+        if (request.getRequestURI().startsWith("/api/v1/users/login") || request.getRequestURI().startsWith("/api/edge")) {
             return;
         }
 
-        String token = jwtTokenProcessor.extractToken(httpRequest);
+        String token = jwtTokenProcessor.extractToken(request);
         if (token == null) {
             throw new TokenProcessException("토큰이 존재하지 않습니다.");
         }
@@ -39,7 +30,5 @@ public class JwtAuthFilter implements Filter {
         Claims claims = jwtTokenProcessor.getClaims(token);
         Long userId = Long.valueOf(claims.getSubject());
         request.setAttribute("userId", userId);
-
-        chain.doFilter(request, response);
     }
 }
