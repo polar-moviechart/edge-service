@@ -7,7 +7,6 @@ import lombok.Setter;
 import java.util.Optional;
 
 @Getter
-@Setter
 public class CustomResponse<T> {
     private Boolean isSuccess = true;
     private String ErrorMsg = null;
