@@ -1,21 +1,21 @@
 package com.polar_moviechart.edgeservice.exception;
 
-public class TokenProcessException extends RuntimeException {
+public class TokenExpiredException extends RuntimeException {
     private static final ErrorInfo errorInfo = ErrorInfo.DEFAULT_ERROR;
 
-    public TokenProcessException() {
+    public TokenExpiredException() {
         super(errorInfo.getMessage());
     }
 
-    public TokenProcessException(ErrorInfo errorInfo, Throwable cause) {
+    public TokenExpiredException(ErrorInfo errorInfo, Throwable cause) {
         super(errorInfo.getMessage(), cause);
     }
 
-    public TokenProcessException(ErrorInfo errorInfo) {
+    public TokenExpiredException(ErrorInfo errorInfo) {
         super(errorInfo.getMessage());
     }
 
-    public TokenProcessException(Throwable cause) {
+    public TokenExpiredException(Throwable cause) {
         super(errorInfo.getMessage(), cause);
     }
 }
