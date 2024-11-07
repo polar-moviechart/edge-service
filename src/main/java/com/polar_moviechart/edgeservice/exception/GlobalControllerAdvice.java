@@ -12,18 +12,21 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(value = {RuntimeException.class})
     public ResponseEntity<CustomResponse<Object>> handleRuntimeException(RuntimeException e) {
         e.printStackTrace();
-        CustomResponse<Object> customResponse = new CustomResponse<>(null);
-        customResponse.setIsSuccess(false);
-        customResponse.setCode(ErrorCode.DEFAULT_ERROR);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(customResponse);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new CustomResponse<>(ErrorInfo.DEFAULT_ERROR));
     }
 
     @ExceptionHandler(value = {TokenProcessException.class})
     public ResponseEntity<CustomResponse<Object>> handleTokenCreationException(TokenProcessException e) {
         e.printStackTrace();
-        CustomResponse<Object> customResponse = new CustomResponse<>(null);
-        customResponse.setIsSuccess(false);
-        customResponse.setCode(ErrorCode.TOKEN_CREATION_ERROR);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(customResponse);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new CustomResponse<>(ErrorInfo.TOKEN_CREATION_ERROR));
+    }
+
+    @ExceptionHandler(value = {TokenExpiredException.class})
+    public ResponseEntity<CustomResponse<Object>> handleTokenExpiredException(TokenExpiredException e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new CustomResponse<>(ErrorInfo.TOKEN_CREATION_ERROR));
     }
 }

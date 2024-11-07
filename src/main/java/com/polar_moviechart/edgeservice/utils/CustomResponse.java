@@ -1,6 +1,6 @@
 package com.polar_moviechart.edgeservice.utils;
 
-import com.polar_moviechart.edgeservice.exception.ErrorCode;
+import com.polar_moviechart.edgeservice.exception.ErrorInfo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,9 +18,10 @@ public class CustomResponse<T> {
         this.data = Optional.ofNullable(data);
     }
 
-    public void setCode(ErrorCode errorCode) {
-        this.ErrorMsg = errorCode.getMessage();
-        this.code = errorCode.getCode();
+    public CustomResponse(ErrorInfo errorInfo) {
+        this.ErrorMsg = errorInfo.getMessage();
+        this.code = errorInfo.getCode();
+        this.isSuccess = false;
     }
 
     public void setCode(String errorCode) {
