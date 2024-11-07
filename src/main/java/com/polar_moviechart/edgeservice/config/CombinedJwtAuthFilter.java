@@ -23,17 +23,13 @@ public class CombinedJwtAuthFilter extends OncePerRequestFilter {
         String requestPath = request.getRequestURI();
         String token = jwtTokenProcessor.extractToken(request);
 
-        if (patternMatcher.isPublicUrl(requestPath)) {
-            if (token.isEmpty()) {
-                return;
-            }
-            Long userId = validateExpiration(token);
-            request.setAttribute("userId", userId);
+        if (patternMatcher.isPublicUrl(requestPath) && token.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
         }
-        if (!patternMatcher.isPublicUrl(requestPath)) {
-            Long userId = validateExpiration(token);
-            request.setAttribute("userId", userId);
-        }
+
+        Long userId = validateExpiration(token);
+        request.setAttribute("userId", userId);
 
         filterChain.doFilter(request, response);
     }
