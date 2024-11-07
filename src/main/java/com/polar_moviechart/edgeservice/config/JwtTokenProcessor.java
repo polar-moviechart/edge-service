@@ -1,11 +1,17 @@
-package com.polar_moviechart.edgeservice.filter;
+package com.polar_moviechart.edgeservice.config;
 
+import ch.qos.logback.core.spi.ErrorCodes;
+import com.polar_moviechart.edgeservice.exception.ErrorInfo;
+import com.polar_moviechart.edgeservice.exception.TokenExpiredException;
+import com.polar_moviechart.edgeservice.exception.TokenProcessException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 @Component
 public class JwtTokenProcessor {
@@ -34,5 +40,11 @@ public class JwtTokenProcessor {
             return authHeader.substring(7);
         }
         return null;
+    }
+
+    public void validateExpired(Claims claims) {
+        if (claims.getExpiration().before(new Date())) {
+            throw new TokenExpiredException(ErrorInfo.TOKEN_EXPIRED);
+        }
     }
 }
