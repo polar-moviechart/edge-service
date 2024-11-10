@@ -14,7 +14,7 @@ public class KakaoTokenService {
     @Value("${kakao.client.id}")
     private String clientId;
 
-    private final String redirectUri = "http://localhost:8080/api/edge/users/kakao/login/callback";
+    private final String redirectUri = "http://localhost:8080/public/api/edge/users/kakao/login/callback";
     private final String tokenUrl = "https://kauth.kakao.com/oauth/token";
     private final String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
 
