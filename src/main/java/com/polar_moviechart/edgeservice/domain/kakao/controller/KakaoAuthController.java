@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/edge/users/kakao")
+@RequestMapping("/public/api/edge/users/kakao")
 public class KakaoAuthController {
     private final KakaoTokenService kakaoTokenService;
 
