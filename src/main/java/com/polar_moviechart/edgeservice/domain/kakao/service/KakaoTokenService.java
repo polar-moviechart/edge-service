@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 public class KakaoTokenService {
-    private final RestTemplate restTemplate;
 
     @Value("${kakao.client.id}")
     private String clientId;
@@ -17,30 +19,29 @@ public class KakaoTokenService {
     private final String redirectUri = "http://localhost:8080/public/api/edge/users/kakao/login/callback";
     private final String tokenUrl = "https://kauth.kakao.com/oauth/token";
     private final String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
+    private final WebClient webClient;
 
-    public KaKaoTokenResponse getTokenAndRedirectUser(String code) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        String body = String.format("grant_type=authorization_code" +
-                        "&client_id=%s" +
-                        "&redirect_uri=%s" +
-                        "&code=%s",
-                clientId,
-                redirectUri,
-                code);
+    public Mono<KaKaoTokenResponse> getTokenAndRedirectUser(String code) {
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", clientId);
+        body.add("redirect_uri", redirectUri);
+        body.add("code", code);
 
-        HttpEntity<String> request = new HttpEntity<>(body, headers);
-        ResponseEntity<KaKaoTokenResponse> response = restTemplate.exchange(tokenUrl, HttpMethod.POST, request, KaKaoTokenResponse.class);
-        return response.getBody();
+        return webClient.post()
+                .uri(tokenUrl)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(KaKaoTokenResponse.class);
     }
 
-    public KakaoUserInfoDto getUserId(String kakaoAccessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setBearerAuth(kakaoAccessToken);
-        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
-
-        ResponseEntity<KakaoUserInfoDto> response = restTemplate.exchange(userInfoUrl, HttpMethod.POST, httpEntity, KakaoUserInfoDto.class);
-        return response.getBody();
+    public Mono<KakaoUserInfoDto> getUserId(String kakaoAccessToken) {
+        return webClient.post()
+                .uri(userInfoUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(headers -> headers.setBearerAuth(kakaoAccessToken))
+                .retrieve()
+                .bodyToMono(KakaoUserInfoDto.class);
     }
 }
