@@ -1,18 +1,17 @@
 package com.polar_moviechart.edgeservice.config;
 
-import ch.qos.logback.core.spi.ErrorCodes;
 import com.polar_moviechart.edgeservice.exception.ErrorInfo;
 import com.polar_moviechart.edgeservice.exception.TokenExpiredException;
-import com.polar_moviechart.edgeservice.exception.TokenProcessException;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JwtTokenProcessor {
 
@@ -24,18 +23,14 @@ public class JwtTokenProcessor {
     }
 
     public Claims getClaims(String token) {
-        try {
-            return Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (RuntimeException e) {
-            throw new JwtException("올바르지 않은 토큰입니다.", e);
-        }
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
     }
 
-    public String extractToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
+    public String extractToken(ServerHttpRequest request) {
+        String authHeader = request.getHeaders().getFirst("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
