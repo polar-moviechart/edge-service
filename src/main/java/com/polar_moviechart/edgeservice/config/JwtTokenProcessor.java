@@ -4,9 +4,9 @@ import com.polar_moviechart.edgeservice.exception.ErrorInfo;
 import com.polar_moviechart.edgeservice.exception.TokenExpiredException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -29,8 +29,8 @@ public class JwtTokenProcessor {
                 .getBody();
     }
 
-    public String extractToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
+    public String extractToken(ServerHttpRequest request) {
+        String authHeader = request.getHeaders().getFirst("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
