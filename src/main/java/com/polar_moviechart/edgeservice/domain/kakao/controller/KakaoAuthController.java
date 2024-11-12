@@ -1,16 +1,17 @@
 package com.polar_moviechart.edgeservice.domain.kakao.controller;
 
-import com.polar_moviechart.edgeservice.domain.kakao.service.KaKaoTokenResponse;
 import com.polar_moviechart.edgeservice.domain.kakao.service.KakaoTokenService;
-import com.polar_moviechart.edgeservice.domain.kakao.service.KakaoUserInfoDto;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
-import java.io.IOException;
+import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,16 +20,16 @@ public class KakaoAuthController {
     private final KakaoTokenService kakaoTokenService;
 
     @GetMapping("/login/callback")
-    public void getKakaoExternalId(@RequestParam(name = "code") String code,
-                                   HttpServletResponse httpResponse) {
-        KaKaoTokenResponse kaKaoTokenResponse = kakaoTokenService.getTokenAndRedirectUser(code);
-        KakaoUserInfoDto kakaoUserInfoDto = kakaoTokenService.getUserId(kaKaoTokenResponse.getAccess_token());
-
-        String redirectUrl = "http://localhost:3000/kakaoAuth?id=" + kakaoUserInfoDto.getId();
-        try {
-            httpResponse.sendRedirect(redirectUrl);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public Mono<Void> getKakaoExternalId(@RequestParam(name = "code") String code, ServerWebExchange exchange) {
+        return kakaoTokenService.getTokenAndRedirectUser(code)
+                .flatMap(kaKaoTokenResponse ->
+                        kakaoTokenService.getUserId(kaKaoTokenResponse.getAccess_token())
+                .flatMap(kakaoUserInfoDto -> {
+                    String redirectUrl = "http://localhost:3000/kakaoAuth?id=" + kakaoUserInfoDto.getId();
+                    ServerHttpResponse response = exchange.getResponse();
+                    response.setStatusCode(HttpStatus.FOUND);
+                    response.getHeaders().setLocation(URI.create(redirectUrl));
+                    return response.setComplete();
+                }));
     }
 }
