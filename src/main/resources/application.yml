@@ -4,27 +4,34 @@ spring:
 
   cloud:
     gateway:
-      mvc:
-        routes:
-          - id: user-service-public
-            uri: http://localhost:8082
-            predicates:
-              - Path=/public/api/v1/users/**
+      routes:
+        - id: user-service-public
+          uri: http://localhost:8082
+          predicates:
+            - Path=/public/api/v1/users/**
+          filters:
+            - JwtAuthFilterOptional
 
-          - id: user-service-secure
-            uri: http://localhost:8082
-            predicates:
-              - Path=/secure/api/v1/users/**
+        - id: user-service-secure
+          uri: http://localhost:8082
+          predicates:
+            - Path=/secure/api/v1/users/**
+          filters:
+            - JwtAuthFilter
 
-          - id: movie-service-public
-            uri: http://localhost:8081
-            predicates:
-              - Path=/public/api/v1/movies/**
+        - id: movie-service-public
+          uri: http://localhost:8081
+          predicates:
+            - Path=/public/api/v1/movies/**
+          filters:
+            - JwtAuthFilterOptional
 
-          - id: movie-service-secure
-            uri: http://localhost:8081
-            predicates:
-              - Path=/secure/api/v1/movies/**
+        - id: movie-service-secure
+          uri: http://localhost:8081
+          predicates:
+            - Path=/secure/api/v1/movies/**
+          filters:
+            - JwtAuthFilter
 
 server:
   port: 8080
