@@ -13,6 +13,9 @@ public class CustomResponse<T> {
     private String code = null;
     private Optional<T> data;
 
+    public CustomResponse() {
+    }
+
     public CustomResponse(T data) {
         this.data = Optional.ofNullable(data);
     }
