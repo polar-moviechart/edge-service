@@ -2,18 +2,10 @@
 FROM eclipse-temurin:17 AS builder
 WORKDIR /workspace
 
-# Gradle 관련 파일 복사 및 의존성 캐싱
-COPY build.gradle settings.gradle gradlew /workspace/
-COPY gradle /workspace/gradle
-RUN ./gradlew dependencies --no-daemon
-
-# 소스 코드 복사 및 JAR 파일 빌드
-COPY src /workspace/src
-RUN ./gradlew clean build --no-daemon --parallel
-
-# 빌드된 JAR 파일 추출 (계층화 지원)
 ARG JAR_FILE=build/libs/edge-service-0.0.1-SNAPSHOT.jar
-RUN java -Djarmode=layertools -jar ${JAR_FILE} extract
+COPY ${JAR_FILE} edge-service.jar
+# 빌드된 JAR 파일 추출 (계층화 지원)
+RUN java -Djarmode=layertools -jar edge-service.jar extract
 
 # 2단계: 실행 단계
 FROM eclipse-temurin:17
