@@ -61,13 +61,13 @@ public class JwtAuthFilterOptional extends AbstractGatewayFilterFactory<JwtAuthF
                 return chain.filter(exchange.mutate().request(mutatedRequest).build());
 
             } catch (ExpiredJwtException | TokenExpiredException e) {
-                log.error(e.getMessage(), e);
+//                log.error(e.getMessage(), e);
                 return writeErrorResponse(exchange, HttpStatus.INTERNAL_SERVER_ERROR, ErrorInfo.TOKEN_EXPIRED);
             } catch (JwtException e) {
-                log.error(e.getMessage(), e);
+//                log.error(e.getMessage(), e);
                 return writeErrorResponse(exchange, HttpStatus.INTERNAL_SERVER_ERROR, ErrorInfo.TOKEN_CREATION_ERROR);
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+//                log.error(e.getMessage(), e);
                 return writeErrorResponse(exchange, HttpStatus.INTERNAL_SERVER_ERROR, ErrorInfo.DEFAULT_ERROR);
             }
         };
