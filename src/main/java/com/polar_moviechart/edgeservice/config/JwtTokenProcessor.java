@@ -31,7 +31,9 @@ public class JwtTokenProcessor {
 
     public String extractToken(ServerHttpRequest request) {
         String authHeader = request.getHeaders().getFirst("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (authHeader == null) {
+            return null;
+        } else if (!authHeader.startsWith("Bearer null")) {
             return authHeader.substring(7);
         }
         return null;
