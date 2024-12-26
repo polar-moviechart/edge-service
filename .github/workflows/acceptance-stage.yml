@@ -6,6 +6,13 @@ on:
     branches: main
 concurrency: acceptance
 
+env:
+  OWNER: polar-moviechart
+  REGISTRY: ghcr.io
+  APP_REPO: edge-service
+  DEPLOY_REPO: polar-deployment
+  VERSION: ${{ github.sha }}
+
 jobs:
   functional:
     name: Functional Acceptance Tests
@@ -25,3 +32,24 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - run: echo "Running security tests"
+  deliver:
+    name: Deliver release candidate to production
+    needs: [ functional, performance, security ]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Deliver application to production
+        # 다른 저장소에서 워크플로를 시작하도록 이벤트를 보내는 액션
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          # 다른 저장소로 이벤트를 보낼 수 있도록 액션 권한을 위한 토큰
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          repository:
+            # 알릴 저장소
+            ${{ env.OWNER }}/${{ env.DEPLOY_REPO }}
+          event-type: app_delivery
+          client-payload: '{
+          "app_image":
+            "${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.APP_REPO }}",
+          "app_name": "${{ env.APP_REPO }}",
+          "app_version": "${{ env.VERSION }}"
+        }'
