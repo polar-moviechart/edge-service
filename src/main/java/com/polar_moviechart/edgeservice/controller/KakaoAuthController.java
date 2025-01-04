@@ -1,4 +1,4 @@
-package com.polar_moviechart.edgeservice.domain.kakao.controller;
+package com.polar_moviechart.edgeservice.controller;
 
 import com.polar_moviechart.edgeservice.domain.kakao.service.KakaoTokenService;
 import lombok.RequiredArgsConstructor;
