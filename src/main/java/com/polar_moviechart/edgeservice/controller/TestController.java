@@ -12,6 +12,6 @@ public class TestController {
 
     @GetMapping("/")
     public String getTestMessage() {
-        return "hello polar moviechart";
+        return "hello polar moviechart - argocd-test";
     }
 }
