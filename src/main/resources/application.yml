@@ -35,6 +35,9 @@ spring:
 
 cors:
   origins: http://localhost:3000, https://kauth.kakao.com
+edge:
+  service:
+    url: http://localhost:8080
 
 management:
   endpoints:
