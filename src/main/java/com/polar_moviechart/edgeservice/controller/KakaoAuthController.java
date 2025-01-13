@@ -2,6 +2,7 @@ package com.polar_moviechart.edgeservice.controller;
 
 import com.polar_moviechart.edgeservice.domain.kakao.service.KakaoTokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +20,16 @@ import java.net.URI;
 public class KakaoAuthController {
     private final KakaoTokenService kakaoTokenService;
 
+    @Value("${cors.origins}")
+    private String origins;
+
     @GetMapping("/login/callback")
     public Mono<Void> getKakaoExternalId(@RequestParam(name = "code") String code, ServerWebExchange exchange) {
         return kakaoTokenService.getTokenAndRedirectUser(code)
                 .flatMap(kaKaoTokenResponse ->
                         kakaoTokenService.getUserId(kaKaoTokenResponse.getAccess_token())
                 .flatMap(kakaoUserInfoDto -> {
-                    String redirectUrl = "http://localhost:3000/kakaoAuth?id=" + kakaoUserInfoDto.getId();
+                    String redirectUrl = String.format("%s/kakaoAuth?id=%s", origins, kakaoUserInfoDto.getId());
                     ServerHttpResponse response = exchange.getResponse();
                     response.setStatusCode(HttpStatus.FOUND);
                     response.getHeaders().setLocation(URI.create(redirectUrl));
