@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -30,6 +31,7 @@ public class SecurityConfig {
                 .authorizeExchange()
                 .pathMatchers("/public/api/**").permitAll()
                 .pathMatchers("/secure/api/**").permitAll()
+                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll() // preflight 요청 허용
                 .anyExchange().permitAll();
 
         return http.build();
