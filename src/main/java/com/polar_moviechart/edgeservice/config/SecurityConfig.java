@@ -20,7 +20,7 @@ import java.util.List;
 public class SecurityConfig {
 
     @Value("${cors.origins}")
-    private String origins;
+    private List<String> origins;
 
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) throws Exception {
@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .authorizeExchange()
                 .pathMatchers("/public/api/**").permitAll()
                 .pathMatchers("/secure/api/**").permitAll()
-                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll() // preflight 요청 허용
+                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll() // preflight 요청 허
                 .anyExchange().permitAll();
 
         return http.build();
@@ -40,7 +40,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(origins));
+        configuration.setAllowedOrigins(origins);
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

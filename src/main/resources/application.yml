@@ -34,7 +34,7 @@ spring:
             - JwtAuthFilter
 
 cors:
-  origins: http://localhost:3000
+  origins: http://localhost:3000, https://kauth.kakao.com
 
 management:
   endpoints:
