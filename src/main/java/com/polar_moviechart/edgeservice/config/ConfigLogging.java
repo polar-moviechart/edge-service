@@ -1,15 +1,19 @@
 package com.polar_moviechart.edgeservice.config;
 
-import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
-public abstract class ConfigLogging {
+@Slf4j
+@Component
+public class ConfigLogging implements CommandLineRunner {
 
-    @Value("{cors.origins}")
-    private static String origins;
-    
-    @PostConstruct
-    public void logOrigins() {
-        System.out.println("Allowed CORS Origins: " + origins);
+    @Value("${cors.origins}")
+    private String origins;
+
+    @Override
+    public void run(String... args) throws Exception {
+        log.info("Allowed CORS Origins: {}", origins);
     }
 }
