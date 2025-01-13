@@ -34,7 +34,8 @@ spring:
             - JwtAuthFilter
 
 cors:
-  origins: http://localhost:3000, https://kauth.kakao.com
+  origins: http://localhost:3000
+  allow: https://kauth.kakao.com
 edge:
   service:
     url: http://localhost:8080

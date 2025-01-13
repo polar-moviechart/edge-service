@@ -20,7 +20,9 @@ import java.util.List;
 public class SecurityConfig {
 
     @Value("${cors.origins}")
-    private List<String> origins;
+    private String origins;
+    @Value("${cors.allow")
+    private List<String> allows;
 
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) throws Exception {
@@ -40,7 +42,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(origins);
+        allows.add(origins);
+        configuration.setAllowedOrigins(allows);
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

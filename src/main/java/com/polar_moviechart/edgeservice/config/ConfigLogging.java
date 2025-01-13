@@ -12,10 +12,14 @@ import java.util.List;
 public class ConfigLogging implements CommandLineRunner {
 
     @Value("${cors.origins}")
-    private List<String> origins;
+    private String origins;
+
+    @Value("$cors.allow}")
+    private List<String> allow;
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("Allowed CORS Origins: {}", origins);
+        allow.add(origins);
+        log.info("Allowed CORS: {}", allow);
     }
 }
